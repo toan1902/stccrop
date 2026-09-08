@@ -1,0 +1,55 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sản phẩm | STC CROP</title><meta name="description" content="Danh sách thiết bị nhà thông minh STC CROP cung cấp và lắp đặt tại Đắk Lắk."><style>:root{--ink:#10202e;--blue:#176bba;--cyan:#1ba6d9;--muted:#687789;--line:#dce5ec}*{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:Arial,sans-serif}header{background:#091a29;color:#fff}.bar{max-width:1120px;margin:auto;padding:20px 24px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:22px;font-weight:900}.brand span{color:var(--cyan)}a{color:inherit}.bar a{text-decoration:none}.hero{padding:56px 24px;background:linear-gradient(135deg,#0b2338,#176bba);color:#fff}.hero div,main{max-width:1120px;margin:auto}.hero h1{font-size:clamp(32px,5.5vw,52px);margin:0}.hero p{color:#c9dbea;font-size:17px}main{padding:40px 24px 60px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}.filters a{padding:8px 16px;border-radius:999px;border:1px solid var(--line);font-size:13.5px;font-weight:700;color:var(--muted);text-decoration:none}.filters a.active{background:var(--ink);border-color:var(--ink);color:#fff}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}.card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;display:flex;flex-direction:column}.card .thumb{width:100%;height:190px;object-fit:cover;background:#eef2f6}.card .thumb.ph{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px}.body{padding:18px;display:flex;flex-direction:column;gap:6px;flex:1}.cat{color:var(--blue);font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.card h2{font-size:18px;margin:0;line-height:1.35}.price{margin-top:auto;font-size:17px;font-weight:800;color:var(--ink)}.card a.cta{text-decoration:none;text-align:center;margin-top:10px;padding:10px;border-radius:8px;background:var(--blue);color:#fff;font-weight:700;font-size:14px}
+.detail{max-width:900px}.detail .thumb{width:100%;max-height:440px;object-fit:cover;border-radius:12px}.detail h1{font-size:clamp(28px,5vw,42px);margin:22px 0 6px}.detail .price{font-size:24px;color:var(--blue);margin-bottom:22px}.detail .desc{font-size:17px;line-height:1.8;white-space:pre-line}.back{display:inline-block;margin-bottom:18px;color:var(--blue);text-decoration:none;font-weight:700;font-size:14px}.contactbox{margin-top:32px;padding:24px;border-radius:12px;background:#0c1b2a;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.contactbox a{background:#1ba6d9;color:#052330;font-weight:800;padding:12px 20px;border-radius:8px;text-decoration:none}
+.empty{text-align:center;color:var(--muted);padding:70px 0}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.hero{padding:40px 20px}}
+</style></head><body>
+<header><div class="bar"><div class="brand"><span>STC</span> CROP</div><a href="/">Trang chủ</a></div></header>
+<section class="hero"><div><h1>Sản phẩm</h1><p>Thiết bị nhà thông minh STC CROP tư vấn, cung cấp và lắp đặt tại Đắk Lắk.</p></div></section>
+<main id="content"><p class="empty">Đang tải sản phẩm...</p></main>
+<script>
+const root=document.getElementById('content'),
+  esc=s=>String(s??'').replace(/[&<>"]/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[x])),
+  money=n=>n==null||n===''?'Liên hệ':Number(n).toLocaleString('vi-VN')+'đ',
+  catLabel={'cong-tac':'Công tắc','o-cam':'Ổ cắm','khoa-cua':'Khóa cửa','camera':'Camera','cam-bien':'Cảm biến','khac':'Khác'};
+async function get(path){const r=await fetch('/api/stc?path='+encodeURIComponent('/rest/v1/'+path));if(!r.ok)throw new Error();return r.json()}
+{
+  const slug=new URLSearchParams(location.search).get('sp'),
+    cat=new URLSearchParams(location.search).get('danh-muc');
+  (async()=>{
+    try{
+      if(slug){
+        const rows=await get(`products?select=*&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`);
+        const p=rows[0];
+        if(!p){root.innerHTML='<p class="empty">Không tìm thấy sản phẩm.</p>';return}
+        document.title=p.name+' | STC CROP';
+        root.className='detail';
+        root.innerHTML=`<a class="back" href="/san-pham.html">← Tất cả sản phẩm</a>
+          ${p.image_url?`<img class="thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}">`:''}
+          <div class="cat">${esc(catLabel[p.category]||p.category||'')}</div>
+          <h1>${esc(p.name)}</h1>
+          <div class="price">${money(p.price)}</div>
+          <div class="desc">${esc(p.description||'')}</div>
+          <div class="contactbox"><div><strong>Cần tư vấn lắp đặt?</strong><br>Hotline: 0917 07 1717</div><a href="tel:0917071717">Gọi ngay</a></div>`;
+      }else{
+        let path='products?select=*&status=eq.published&order=updated_at.desc';
+        if(cat)path+='&category=eq.'+encodeURIComponent(cat);
+        const rows=await get(path);
+        const cats=[...new Set(Object.keys(catLabel))];
+        const filters=`<div class="filters"><a href="/san-pham.html" class="${!cat?'active':''}">Tất cả</a>${cats.map(c=>`<a href="/san-pham.html?danh-muc=${c}" class="${cat===c?'active':''}">${catLabel[c]}</a>`).join('')}</div>`;
+        root.innerHTML=filters+(rows.length?`<div class="grid">${rows.map(p=>`
+          <article class="card">
+            ${p.image_url?`<img class="thumb" src="${esc(p.image_url)}" alt="${esc(p.name)}">`:'<div class="thumb ph">Chưa có ảnh</div>'}
+            <div class="body">
+              <div class="cat">${esc(catLabel[p.category]||p.category||'')}</div>
+              <h2><a href="?sp=${encodeURIComponent(p.slug)}" style="text-decoration:none;color:inherit">${esc(p.name)}</a></h2>
+              <div class="price">${money(p.price)}</div>
+              <a class="cta" href="?sp=${encodeURIComponent(p.slug)}">Xem chi tiết</a>
+            </div>
+          </article>`).join('')}</div>`:'<p class="empty">Chưa có sản phẩm nào trong danh mục này.</p>');
+      }
+    }catch(e){root.innerHTML='<p class="empty">Không tải được dữ liệu sản phẩm.</p>'}
+  })();
+}
+</script>
+</body></html>
