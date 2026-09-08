@@ -3,7 +3,7 @@ const SUPABASE_KEY='sb_publishable_L54dww2B1NiaFkqJ5Uj4hg_o7Pj2281';
 
 module.exports=async function handler(req,res){
   const path=String(req.query.path||'');
-  const allowed=/^\/auth\/v1\/token\?grant_type=password$/.test(path)||/^\/rest\/v1\/posts(?:\?|$)/.test(path)||/^\/storage\/v1\/object\/post-images\/[A-Za-z0-9._-]+$/.test(path);
+  const allowed=/^\/auth\/v1\/token\?grant_type=password$/.test(path)||/^\/rest\/v1\/posts(?:\?|$)/.test(path)||/^\/rest\/v1\/products(?:\?|$)/.test(path)||/^\/storage\/v1\/object\/post-images\/[A-Za-z0-9._-]+$/.test(path)||/^\/storage\/v1\/object\/product-images\/[A-Za-z0-9._-]+$/.test(path);
   if(!allowed)return res.status(403).json({message:'Đường dẫn không được phép.'});
   try{
     let body=req.method==='GET'||req.method==='HEAD'?undefined:req.body;
